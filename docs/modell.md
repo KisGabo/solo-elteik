@@ -22,6 +22,8 @@
 - `draw2` (húzz kettőt)
 - `reverse` (irányváltoztatás)
 - `skip` (kimarad)
+- `swap` (kártyacsere)
+- `circular` (körkörös kártyacsere)
 - `wild` (színválasztó)
 - `draw4wild` (húzz négyet és színválasztás)
 
