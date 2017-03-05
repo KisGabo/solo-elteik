@@ -28,11 +28,11 @@
 - `draw4wild` (húzz négyet és színválasztás)
 
 **number** lehetséges értékei (feltéve ha `type=='number'`):
-- 0-tól 9-ig
+- 1-tól 9-ig
 
 ## CardDeck osztály
 
-A lefordított, esetleg megkevert kártyapakli. Ebből fognak a játékosok a játék elején kártyákat kapni, és ebből húznak a játék során.
+A lefordított, megkevert kártyapakli. Ebből fognak a játékosok a játék elején kártyákat kapni, és ebből húznak a játék során. (Nem kell nyilvántartania a már kijátszott lapokat, ez az osztály csak a lefordított paklit reprezentálja)
 
 - `draw()`: pakli tetejéről a következő kártyalapot adja vissza (és le is veszi a pakliról)
 - `count()`: hány kártyalap van még a pakliban
@@ -53,7 +53,7 @@ deck.draw()
 
 ## SoloGame osztály
 
-A játékmenet modell. A játékosok egy sorszámmal vannak azonosítva. Egy játékosnak a kártyalapjai a tömbbeli indexszel vannak azonosítva (ez a cardId).
+A játékmenet modell. A játékosok egy sorszámmal vannak azonosítva. Egy játékosnak a kártyalapjai a tömbbeli indexszel vannak azonosítva (a tömbbeli indexet itt cardId-nak nevezem; a card nevű paraméter pedig egy kártyalap objektumot jelent)
 
 - `constructor(numOfPlayers, cardDeck)`: új játék adott számú játékossal (oszt a pakliból, első lap lerak)
 - `canBePlaced(card, playerId)`: le lehet-e tenni az adott kártyalapot az adott sorszámú játékos által (true/false)

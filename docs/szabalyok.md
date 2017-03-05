@@ -10,5 +10,5 @@ Egyelőre ragaszkodjunk a hivatalos használati útmutatóban lévő szabályokh
 - "húzz kettőt" kártyára nem lehet "húzz négyet" kártyát tenni
 - sima kártyacsere lap letételekor nem kötelező cserélni
 - körkörös kártyacsere lap letételekor kötelezően minden játékos az utána lévőnek adja a lapjait
-- közbedobás: ha valakinél van a felső kártyával **teljesen(!)** megegyező lap, akkor azt **bámikor** lerakhatja (attól függetlenül, hogy ő következik-e vagy sem); ilyenkor a közbedobó utáni játékos következik
+- közbedobás: ha a felső kártya szám, és valakinél van a felső kártyával **teljesen(!)** megegyező lap, akkor azt **bámikor** lerakhatja (attól függetlenül, hogy ő következik-e vagy sem); ilyenkor a közbedobó utáni játékos következik
 - a játéknak akkor van vége, ha valakinél elfogytak a lapok, és ő nyert (ez nem teljesen a hivatalos szabály, de egyelőre maradjunk ennél az egyszerű változatnál)
