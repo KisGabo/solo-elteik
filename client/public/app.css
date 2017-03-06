@@ -1,0 +1,39 @@
+
+body {
+    background: #84996f;
+}
+
+#gameArea{
+    display: none;
+}
+ 
+#welcomePage{
+    display: block;
+    background: #a7efd3;
+    margin: 0 auto;
+    position: relative;
+    top: 200px;
+    width: 60%;
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+#startBtnDiv{
+    text-align: center;
+}
+
+#startBtn{
+    background-color: #01995e;
+    border: none;
+    color: white;
+    padding: 20px 32px;
+    border-radius: 5px;
+    text-align: center;
+    display: inline-block;
+    font-size: 24px;
+}
+#startBtn:hover {
+    background-color: #27e89d; 
+    color: navajowhite;
+}
