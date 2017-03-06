@@ -1,10 +1,33 @@
-
+ul {
+    list-style-image: url('images/view/Uno-Game.png');
+    list-style-position: inside;
+}
 body {
     background: #84996f;
 }
 
+#waitArea{
+    display: none;
+    background: #a7efd3;
+    margin: 0 auto;
+    position: relative;
+    top: 200px;
+    width: 60%;
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
+}
+
 #gameArea{
     display: none;
+    background: #a7efd3;
+    margin: 0 auto;
+    position: relative;
+    top: 200px;
+    width: 60%;
+    padding: 10px;
+    border-radius: 15px;
+    text-align: center;
 }
  
 #welcomePage{
@@ -36,4 +59,11 @@ body {
 #startBtn:hover {
     background-color: #27e89d; 
     color: navajowhite;
+}
+
+#players{
+    position: relative;
+    margin: 0 auto;
+    left: -20px;
+    width: 240px;
 }
