@@ -28,9 +28,9 @@
      * 
      * @param {number} numOfPlayers - A játékosok száma, a [2, 10] intervallumba kell esnie.
      */
-    constructor(numOfPlayers){
+    constructor(deck, numOfPlayers){
         this._numOfPlayers = numOfPlayers
-        this._deck = new CardDeck()
+        this._deck = deck
         this._originalDirection = true
         this._onTurn = 0
         this._playedCards = []
