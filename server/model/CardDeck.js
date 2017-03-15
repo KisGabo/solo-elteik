@@ -6,7 +6,7 @@ class CardDeck {
     constructor(){
         // a _cards tömb feltöltése a lapokkal
         
-        _cards = []
+        this._cards = []
         
         //számos lapok 1-től 9-ig
         for (let i = 1; i<=9; i++){
@@ -197,7 +197,7 @@ class CardDeck {
                     })
 
         //végül keverés
-        shuffleArray(_cards)                                                              
+        shuffleArray(this._cards)                                                              
     } // konstruktor vége
 
 
@@ -205,7 +205,7 @@ class CardDeck {
      *  hány kártyalap van még a pakliban
      */
     count(){
-        return _cards.length
+        return this._cards.length
     }
 
 
@@ -213,7 +213,7 @@ class CardDeck {
      * pakli tetejéről a következő kártyalapot adja vissza (és le is veszi a pakliról)
      */
     draw(){
-        return _cards.pop()
+        return this._cards.pop()
     }
 
 
@@ -234,7 +234,7 @@ class CardDeck {
  * Megkeveri a paraméterül kapott tömb elemeit
  * @param {Array} a - A tömb, amely a megkeverendő elemeket tartalmazza
  */
-function shuffleArray(a) {
+ function shuffleArray(a) {
     for (let i = a.length; i; i--) {
         let j = Math.floor(Math.random() * i);
         [a[i - 1], a[j]] = [a[j], a[i - 1]];
