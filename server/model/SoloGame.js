@@ -30,8 +30,8 @@ var CardDeck = require('./CardDeck.js');
      * 
      * @param {number} numOfPlayers - A játékosok száma, a [2, 10] intervallumba kell esnie.
      */
-    constructor(deck, nOP){
-        this._numOfPlayers = nOP
+        constructor(deck, numOfPlayers){
+        this._numOfPlayers = numOfPlayers
         this._deck = deck
         this._originalDirection = true
         this._onTurn = 0
@@ -304,7 +304,7 @@ var CardDeck = require('./CardDeck.js');
      */
     _shuffleDeck(){
         this._playedCards.pop()
-        this._deck.shuffle(_playedCards)
+        this._deck.shuffle(this._playedCards)
         this._playedCards = []
         this._playedCards.push(this._topCard)
     }
