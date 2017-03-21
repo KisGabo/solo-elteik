@@ -1,3 +1,5 @@
+import { $, $$ } from './helper'
+
 /**
  * Ezek hívódnak meg, ha valami történik a játékban.
  * Ezek frissítik a HTML-t, animálnak, stb, ami csak kell.

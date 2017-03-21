@@ -1,19 +1,10 @@
 import * as remoteActions from '../remoteActions'
+import { $, $$ } from './helper'
 /**
  * Ez a függvény egyszer lefut, amint betöltött az oldal.
  */
 export default function () {
   console.log('View boot script kész!')
-}
-
-// Segédfüggvények
-
-function $(selector) {
-    return document.querySelector(selector)
-}
-
-function $$(selector) {
-    return document.querySelectorAll(selector)
 }
 
 //ha megnyomja a startot, felugrik egy ablak, ami megkérdezi a nevét
