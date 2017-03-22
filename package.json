@@ -11,11 +11,13 @@
     "url": "https://github.com/KisGabo/solo-elteik"
   },
   "scripts": {
-    "start": "node main.js",
-    "dev": "webpack-dev-server",
+    "start": "webpack && node main.js",
+    "server": "node main.js",
+    "client-dev": "webpack-dev-server",
     "test": "echo \"Coming soon\" && exit 1"
   },
   "dependencies": {
+    "express": "^4.15.2",
     "socket.io": "^1.7.3",
     "socket.io-client": "^1.7.3"
   },

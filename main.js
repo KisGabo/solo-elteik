@@ -1,12 +1,15 @@
 const Http = require('http')
 const Gameserver = require('./server/gameserver')
+const Express = require('express')
 
 console.log('HTTP szerver indítása...')
 
-const httpServer = Http.createServer()
+const app = Express()
+const httpServer = Http.createServer(app)
+app.use(Express.static('client/public'))
 httpServer.listen(80)
 
-console.log('Socket IO indítása...')
+console.log('Gameserver indítása...')
 
 const server = new Gameserver(httpServer)
 server.start()
