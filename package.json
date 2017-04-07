@@ -14,7 +14,8 @@
     "start": "webpack && node main.js",
     "server": "node main.js",
     "client-dev": "webpack-dev-server",
-    "test": "echo \"Coming soon\" && exit 1"
+    "test": "echo \"Coming soon\" && exit 1",
+    "test-model": "mocha test/model"
   },
   "dependencies": {
     "express": "^4.15.2",
