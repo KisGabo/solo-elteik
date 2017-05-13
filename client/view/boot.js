@@ -1,6 +1,6 @@
 import * as remoteActions from '../remoteActions'
 import { $, $$ } from './helper'
-import {setPlayer} from "./gameEvents"
+import * as gameEvents from "./gameEvents"
 
 /**
  * Ez a függvény egyszer lefut, amint betöltött az oldal.
@@ -22,8 +22,8 @@ function newPlayerInit(){
     $('#welcomePage').style.display = 'none'
     $('#waitArea').style.display = 'block'
     $('#waitArea').innerHTML = "Üdv " + playerName + "! Kérlek várj egy kicsit!" +"<br>" +'<img src="images/view/rolling.svg">'
-    remoteActions.connect(playerName)
-    setPlayer(playerName)
+    //remoteActions.connect(playerName)
+    gameEvents.setPlayer(playerName)
     waitArea()
   }
 }
@@ -37,7 +37,23 @@ function waitArea(){
   $('#waitArea').appendChild(players)
 
   setTimeout(function () {
-       gameEvents.started()
+       gameEvents.started({ cards: [{
+  color: 'blue',
+  type: 'number',
+  number: '1'
+}, {
+  color: '',
+  type: 'wild',
+  number: ''
+}, {
+  color: '',
+  type: 'draw4wild',
+  number: ''
+}], firstCard: {
+  color: 'red',
+  type: 'number',
+  number: '1'
+} })
     }, 1000);
 }
 //bezárás érzékelése

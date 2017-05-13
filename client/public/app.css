@@ -20,16 +20,22 @@ body {
 
 #gameArea{
     display: none;
-    background: #a7efd3;
+    background-image: url('images/view/table.jpg');
     margin: 0 auto;
     position: relative;
-    top: 200px;
-    width: 60%;
-    padding: 10px;
+    top: 10px;
+    width: 1200px;
+    height: 750px;
+    padding: 35px;
     border-radius: 15px;
     text-align: center;
 }
- 
+
+#canvas{
+    background-image: url('images/view/playfield.jpg');
+     border-radius: 15px;
+} 
+
 #welcomePage{
     display: block;
     background: #a7efd3;
