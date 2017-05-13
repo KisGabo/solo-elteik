@@ -7,3 +7,5 @@ export function $(selector) {
 export function $$(selector) {
     return document.querySelectorAll(selector)
 }
+
+
