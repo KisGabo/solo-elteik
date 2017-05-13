@@ -185,7 +185,7 @@ function gameInit(firstCard){
 
     //temporary 
     /** Mivel a szerverrel való kapcsolat kliensfejlesztésnél smafu, muszáj magamtól betenni játékost */
-    players.push(player)
+    //players.push(player)
     //
    $("#waitArea").style.display="none"
    $("#welcomePage").style.display="none";
@@ -288,7 +288,7 @@ function clicked(ev){
     var deckY =  (canvas.height/2)-(backSide.height/2) 
     if(mX>=deckX && mX<deckX+(9*2.5)+backSide.width && mY >= deckY && mY < deckY+(9*2.5)+backSide.height){
          console.log("pakli" )
-         //removeActions.draw()
+         removeActions.draw()
     }
     for(var i = 0; i<player.noCards; i++){
         imgX = ((canvas.width/2)-(player.noCards-1)*50+i*85)
@@ -297,7 +297,7 @@ function clicked(ev){
         if(mX>= imgX && mX< imgX+backSide.width && mY >= imgY && mY < imgY + backSide.height){
             console.log("Bent " + i )
             if(player.cards[i].type=="draw4wild" ||player.cards[i].type=="wild") var color = wild()
-            //remoteActions.place(i,color)
+            remoteActions.place(i,color)
             console.log(player.cards[i])
         }
     }

@@ -22,7 +22,7 @@ function newPlayerInit(){
     $('#welcomePage').style.display = 'none'
     $('#waitArea').style.display = 'block'
     $('#waitArea').innerHTML = "Üdv " + playerName + "! Kérlek várj egy kicsit!" +"<br>" +'<img src="images/view/rolling.svg">'
-    //remoteActions.connect(playerName)
+    remoteActions.connect(playerName)
     gameEvents.setPlayer(playerName)
     waitArea()
   }
@@ -36,7 +36,7 @@ function waitArea(){
 
   $('#waitArea').appendChild(players)
 
-  setTimeout(function () {
+  /*setTimeout(function () {
        gameEvents.started({ cards: [{
   color: 'blue',
   type: 'number',
@@ -54,7 +54,7 @@ function waitArea(){
   type: 'number',
   number: '1'
 } })
-    }, 1000);
+    }, 1000);*/
 }
 //bezárás érzékelése
 window.onbeforeunload = function(){
