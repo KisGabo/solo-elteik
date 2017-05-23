@@ -1,10 +1,13 @@
+/**
+ * @file Ezek a függvények reagálnak a játék történéseire.
+ *   Frissítik a HTML-t, animálnak, stb, ami csak kell.
+ * @module Client/GameEvents
+ * @see /docs/szerver-iface.md "Szerver --> kliens" rész
+ * @author Deák Dániel
+ */
+
 import { $, $$ } from './helper'
 import * as remoteActions from '../remoteActions'
-/**
- * Ezek hívódnak meg, ha valami történik a játékban.
- * Ezek frissítik a HTML-t, animálnak, stb, ami csak kell.
- * Bővebb infó: /docs/szerver-iface.md "Szerver --> kliens" rész
- */
 
 
 // globálisok
@@ -21,8 +24,13 @@ var player = {name:'',id:'',noCards:0,cards:[]}
 var topCard
 var lastClickedCard
 
-/* ha jön a jelzés a szervertől, hogy új ember csatlakozott, beszúr egy új 
-elemet a listába */
+/**
+ * ha jön a jelzés a szervertől, hogy új ember csatlakozott,
+ * beszúr egy új elemet a listába
+ * @param {Object} data Szerver által küldött adat
+ * @param {string} data.name Játékos neve
+ * @param {number} data.id Játékos azonosítója
+ */
 export function playerConnected (data) {
     console.log('--> client: playerConnected', data)
     var newPlayer = document.createElement('li')
@@ -34,7 +42,10 @@ export function playerConnected (data) {
 
 }
 
-/* szerveroldali jelzésre kivesz valakit a listából Id alapján */
+/**
+ * szerveroldali jelzésre kivesz valakit a listából Id alapján
+ * @param {number} playerId Játékos azonosítója
+ */
 export function playerDisconnected (playerId) {
     if(waitingroom){
         $('#players').removeChild(document.getElementById("player-"+playerId))
@@ -43,6 +54,12 @@ export function playerDisconnected (playerId) {
     }
 }
 
+/**
+ * Elindítja a játékot, megjeleníti a játékfelületet.
+ * @param {Object} data Szerver által küldött adat
+ * @param {Card[]} data.cards A játékosnak osztott lapok
+ * @param {Card} dara.firstCard A kezdő lap
+ */
 export function started (data) {
     console.log('--> client: started', data);
     player.id=findPlayerByName(player.name)
@@ -55,6 +72,15 @@ export function started (data) {
 
 }
 
+/**
+ * Frissíti a felületet, mikor egy kártyalapot lerakott valaki.
+ * @param {Object} data Szerver által küldött adat
+ * @param {Card} data.card A lerakott lap
+ * @param {number} data.playerId Ki rakta le
+ * @param {string} [data.info] Ha színválasztó lap, akkor a választott szín
+ * @param {Card[]} [data.newCards] Ha minket érintő csere történt, akkor az új lapjaink
+ * @param {number[]} [data.numOfCards] Ha csere történt, akkor a játékosok lapjainak száma
+ */
 export function cardPlaced (data) {
     console.log('PLAYER IDS', data.playerId, player.id)
     if (data.end) {
@@ -84,7 +110,13 @@ export function cardPlaced (data) {
     redraw()
 }
 
-//data = { numOfCards: ..., playerId: ..., drawnCards: [...] }
+/**
+ * Frissíti a felületet, amikor húzott valaki.
+ * @param {Object} data Szerver által küldött adat
+ * @param {number} data.numOfCards Hány lapot húztak fel egyszerre
+ * @param {number} data.playerId Ki húzott
+ * @param {Card[]} [data.drawnCards] Ha mi húztunk, akkor a húzott lapok
+ */
 export function drawn (data) {
     if (player.id == data.playerId){
         for (var c of data.drawnCards) {
@@ -96,6 +128,10 @@ export function drawn (data) {
     redraw()
 }
 
+/**
+ * Lefut, amikor nem jó lapot tettünk,
+ * vagy nem jókor akartunk lapot tenni.
+ */
 export function illegalAction () {
     alert('Ezt most nem lépheted meg.')
 }
@@ -105,26 +141,45 @@ export function illegalAction () {
 
 
 
-//játékoskezelés
+/**
+ * Beállítja a kliens játékos nevét.
+ * @param {string} name
+ */
 export function setPlayer(name){
     player.name = name
 }
 
+/**
+ * Megkeresi a játékos ID-ját név alapján.
+ * @param {string} name A játékos neve
+ * @return {number} A játékos ID-ja
+ * @private
+ */
 function findPlayerByName(name){
     for (var p of players){
         if(p.name == name) return p.id
     }
 }
 
-//képkezelés
-
+/**
+ * Image elemet tölt be.
+ * @param {string} cardName A kártya neve
+ * @return {Image} Image elem
+ * @private
+ */
 function loadImage(cardName){
   var img = new Image();
   img.src = "images/cards/"+cardName+".jpg"
   return img
 
 }
-//betölti a képeket
+
+/**
+ * Betölti az adott színű kártyalapok képeit.
+ * @param {string} color Színjelzés
+ * @return {Map<string, Image>} A betöltött képek
+ * @private
+ */
 function loadImages(color){
     var cards = new Map()
     var numbers = ['1','2','3','4','5','6','7','8','9']
@@ -144,13 +199,30 @@ function loadImages(color){
         return cards
     }
 }
+
 //segédfüggvények, hogy ne legyen minden egybe ömleszve
+
+/**
+ * Kirajzol egy kártyát.
+ * @param {any} ctx Context
+ * @param {Image} img Kirajzolandó kártya képe
+ * @param {number} x X koordináta
+ * @param {number} y Y koordináta
+ * @private
+ */
 function drawCard(ctx, img, x,y){
   ctx.drawImage(img,x,y,img.width,img.height)
   ctx.strokeStyle="rgba(0,0,0,0.9)"
 
   ctx.strokeRect(x,y,img.width,img.height)
 }
+
+/**
+ * @param {any[]} drawnCards
+ * @param {number} numOfCards
+ * @return {any|any[]} Kirajzolható kártyák
+ * @private
+ */
 function cardsDrawn(drawnCards, numOfCards){
     var card = {}
     var cardColor
@@ -183,7 +255,12 @@ function cardsDrawn(drawnCards, numOfCards){
 }
 
 
-
+/**
+ * Adott szín kártyalapjait adja vissza.
+ * @param {string} color Szín
+ * @return {any[]}
+ * @private
+ */
 function decideColor(color){
     switch (color){
         case 'red': return redCards
@@ -194,6 +271,14 @@ function decideColor(color){
     }
 }
 
+/**
+ * Adott játékosnak kirajzol egy kártyát.
+ * @param {Object} player Játékos
+ * @param {number} player.noCards A játékos lapjainak száma
+ * @param {number} j Az asztal melyik helyére rajzolja (0-2)
+ * @param {number} i Hányadik kártyahelyre rajzolja
+ * @private
+ */
 function drawCardFor(player,j,i){
     switch (j){
         case 0:  drawCard(ctx,backSide, (canvas.width-backSide.width-10), ((canvas.height/2)-(player.noCards)*15)+i*15)
@@ -205,6 +290,11 @@ function drawCardFor(player,j,i){
 
 //játéktér
 
+/**
+ * Előállítja a játékteret.
+ * @param {Card} firstCard A kezdő lap
+ * @private
+ */
 function gameInit(firstCard){
 
     //temporary 
@@ -250,7 +340,10 @@ function gameInit(firstCard){
 
 }
 
-//újrarajzolja a képernyőt
+/**
+ * Újrarajzolja a képernyőt.
+ * @private
+ */
 function redraw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);//letörli az eddigit
     var noPlayers = 4
@@ -276,7 +369,12 @@ function redraw(){
     }
 
 }
-//kiveszi a kirakott lapokat a kezéből
+
+/**
+ * Kiveszi a kirakott lapot a játékos kezéből.
+ * @param {number} pos A lerakott kártya indexe
+ * @private
+ */
 function removeCard(pos){
   player.cards.splice(pos,1)
 //   var tempcards = []
@@ -288,7 +386,11 @@ function removeCard(pos){
   players[player.id].noCards-=1
 }
 
-//kilépő játékos törlése
+/**
+ * Kilépő játékos törlése.
+ * @param {number} playerId A kilépett játékos azonosítója
+ * @private
+ */
 function deletePlayer(playerId){
   players.splice(playerId,1)
   var temp = []
@@ -302,6 +404,13 @@ function deletePlayer(playerId){
 
 //egérakciók
 
+/**
+ * Kezeli a canvason való kattintást.
+ * Megnézi, hogy hova kattintott a játékos: kártyára vagy a paklira,
+ * és aszerint cselekszik.
+ * @param {any} ev Eseményobjektum
+ * @private
+ */
 function clicked(ev){
     var rect = canvas.getBoundingClientRect();
     var mX = ev.pageX -rect.left -document.body.scrollLeft
@@ -331,6 +440,11 @@ function clicked(ev){
     }
 }
 
+/**
+ * Megkérdezi a játékost a választott színről.
+ * @return {string} A szín
+ * @private
+ */
 function wild(){
  while (true) {
   var color=  prompt("Kérlek, adj meg egy színt, amelyet kiválasztanál!(red/blue/green/yellow)");
@@ -338,6 +452,11 @@ function wild(){
  }
 }
 
+/**
+ * Megkérdezi a játékost, hogy kivel szeretne cserélni.
+ * @return {number} A játékos sorszáma, vagy -1, ha nem cserél
+ * @private
+ */
 function swap(){
  while (true) {
   var swapWith = prompt("Kérlek add meg a játékos sorszámát (0-tól kezdve), akivel cserélni szeretnél! (vagy -1 ha nem szeretnél cserélni)")

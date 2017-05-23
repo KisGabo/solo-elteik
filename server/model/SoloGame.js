@@ -1,5 +1,18 @@
 var CardDeck = require('./CardDeck.js');
 
+/**
+ * Egy kártyalapot reprezentáló struktúra
+ * @typedef {Object} Card
+ * @property {string} color A kártya színe (red, green, blue, yellow, vagy üres string)
+ * @property {string} type Típus: number, draw2, reverse, skip, swap, circular, wild, draw4wild
+ * @property {number} [number] Számkártya esetén a szám (1-9)
+ */
+
+/**
+ * A játákmenet logikája.
+ * @module Server/Model
+ * @author Biró Ádám
+ */
  class SoloGame {
 
     /**
@@ -28,17 +41,63 @@ var CardDeck = require('./CardDeck.js');
      * A _removedPlayers[] tömb tárolja a (removePlayer() hatására) kilépett játékosokat - 
      *                      a kilépett sorszámú eleme true, a többi false.
      * 
+     * @param {CardDeck} deck A kártyapakli
      * @param {number} numOfPlayers - A játékosok száma, a [2, 10] intervallumba kell esnie.
      */
         constructor(deck, numOfPlayers){
+        
+        /**
+         * @member {number} Játékosok száma
+         * @private
+         */
         this._numOfPlayers = numOfPlayers
+
+        /**
+         * @member {CardDeck} Kártyapakli
+         * @private
+         */
         this._deck = deck
+
+        /**
+         * @member {boolean} Játék iránya (true: előre, false: hátra)
+         * @private
+         */
         this._originalDirection = true
+
+        /**
+         * @member {number} Következő játékos sorszáma
+         * @private
+         */
         this._onTurn = 0
+
+        /**
+         * @member {Card[]} Kijátszott lapok
+         * @private
+         */
         this._playedCards = []
+
+        /**
+         * @member {Card[][]} Játékosok lapjai
+         * @private
+         */
         this._players = []//new Array(this._numOfPlayers).fill( new Array() )        
+        
+        /**
+         * @member {string} A legutóbb lerakott színváltó kártyalap kért színe
+         * @private
+         */
         this._wantedColor = ''
+
+        /**
+         * @member {number} Következő húzáskor hány lapot kell felhuzatni a játékossal
+         * @private
+         */
         this._cardsToDraw = 0
+
+        /**
+         * @member {boolean[]} Lecsatlakozott-e az adott indexű játékos
+         * @private
+         */
         this._removedPlayers = []        
         
         for (let i = 0; i < this._numOfPlayers; i++){
@@ -64,10 +123,6 @@ var CardDeck = require('./CardDeck.js');
     /**
      * Igazat ad vissza, ha a card által jelölt lapot a playerId által jelölt sorszámú játékos szabályosan kijátszhatja, 
      * beleértve a közbedobást is. Különben hamisat.
-     *
-     * 
-     * @param {card} card - A lap, amit valaki le szeretni tenni
-     * @param {int} playerId - Annak a játékosnak a sorszáma, aki tenni szeretné  (0 .. numOfPlayers-1)
      * 
      * A card-nak így kell kinéznie:
      *  {
@@ -75,6 +130,11 @@ var CardDeck = require('./CardDeck.js');
      *   type: '...',    // number, draw2, ...
      *   number: ...     // 1-9, ha számozott a lap
      *   }
+     *
+     * 
+     * @param {Card} card - A lap, amit valaki le szeretni tenni
+     * @param {number} playerId - Annak a játékosnak a sorszáma, aki tenni szeretné  (0 .. numOfPlayers-1)
+     * @return {boolean}
      */
     canBePlaced(card, playerId){   
          // leellenőrzi, hogy az adott játékosnak van-e egyáltalán ilyen kártyája - console-beli hack-ek elkerülése miatt
@@ -149,8 +209,8 @@ var CardDeck = require('./CardDeck.js');
      *  -1 ha nem akar cserélni)
      * Az adott sorszámú lapot kiveszi az adott sorszámú játékos lapjai közül és beteszi a kijátsztott lapokhoz.
      * 
-     * @param {int} cardId - A dobó játékos cardId sorszámú lapja 
-     * @param {playerId} cardId - A dobó játékos sorszáma
+     * @param {number} cardId - A dobó játékos cardId sorszámú lapja 
+     * @param {number} playerId - A dobó játékos sorszáma
      * @param {string} info -egy szín, ha színváltós kártyalapot tesz le, 
      *                      illetve egy játékos sorszáma kártyacsere lap esetén; -1 ha nem akar cserélni
      *                      'sima' (type == 'number') esetén üres string
@@ -229,8 +289,8 @@ var CardDeck = require('./CardDeck.js');
 
     /**
      * A soron következő játékos nem tud vagy nem akar tenni, ezért húz a pakliból egyet 
-     * (vagy kettőt, négyet, nyolcat, attól függően, hogy volt-e lerakva az előbbiekben húzós kártya); 
-     * visszaadja a felhúzott lapok tömbjét (akkor is tömb, ha csak egy).
+     * (vagy kettőt, négyet, nyolcat, attól függően, hogy volt-e lerakva az előbbiekben húzós kártya).
+     * @return {Card[]} A felhúzott lapok tömbje (akkor is tömb, ha csak egy).
      */
     draw(){
         let toDraw = []
@@ -255,7 +315,7 @@ var CardDeck = require('./CardDeck.js');
 
 
     /**
-     * A legutóbbi lerakott kártyalapot adja vissza
+     * @return {Card} A legutóbbi lerakott kártyalapot adja vissza
      */
     getCurrentCard(){
         return this._topCard
@@ -263,7 +323,7 @@ var CardDeck = require('./CardDeck.js');
 
 
     /**
-     * A soron következő játékos sorszámát adja vissza
+     * @return {number} A soron következő játékos sorszámát adja vissza
      */
     getNextPlayer(){
         return this._onTurn
@@ -271,7 +331,8 @@ var CardDeck = require('./CardDeck.js');
 
 
     /**
-     * A játék jelenlegi iránya (true: előre (1,2,3,1,2,3,...), false: hátra (3,2,1,3,2,1,...))
+     * @return {boolean} A játék jelenlegi iránya
+     *   (true: előre (1,2,3,1,2,3,...), false: hátra (3,2,1,3,2,1,...))
      */
     getDirection(){
         return this._originalDirection
@@ -279,8 +340,9 @@ var CardDeck = require('./CardDeck.js');
 
 
     /**
-     *  Adott játékos kártyalapjait visszaadja tömbben
-     * @param {int} playerId - A játékos sorszáma
+     * Adott játékos kártyalapjait visszaadja tömbben
+     * @param {number} playerId - A játékos sorszáma
+     * @return {Card[]}
      */
     getPlayerCards(playerId){
         return this._players[playerId]
@@ -288,7 +350,7 @@ var CardDeck = require('./CardDeck.js');
 
 
     /**
-     * Vége van-e a játéknak?
+     * @return {boolean} Vége van-e a játéknak?
      */
     hasEnded(){
         let i = 0
@@ -306,7 +368,7 @@ var CardDeck = require('./CardDeck.js');
     /**
      * A kijátzott lapok megkeverésével új deck készítése húzáshoz.
      * A felső lapot kiveszi a kijátszott lapok közül, mivel az nem kell, hogy a keverésben részt vegyen
-     * TODO: mi történjen olyankor, amikor elfogyott a deck (húzólap), de a soron következő nem dob, vagy mert nem tud, vagy mert nem akar?
+     * @private
      */
     _shuffleDeck(){
         this._playedCards.pop()
@@ -318,8 +380,9 @@ var CardDeck = require('./CardDeck.js');
 
 /**
  * Segédfüggvény, amely a paraméterül kapott számmal lépteti a soron következő játékost tároló változót
- * @param {int} n - A szám, hogy mennyivel léptesse. Ennek értéke 1 (normál lépés) vagy 2 (skip esetén) lehet
- * @param {int} from - Kitől kezdve léptesse (közbedobás esetén ez nem a this._onTurn)
+ * @param {number} n - A szám, hogy mennyivel léptesse. Ennek értéke 1 (normál lépés) vagy 2 (skip esetén) lehet
+ * @param {number} from - Kitől kezdve léptesse (közbedobás esetén ez nem a this._onTurn)
+ * @private
  */
     _stepToNext(n, from){
         if (from !== undefined) this._onTurn = from
@@ -344,7 +407,7 @@ var CardDeck = require('./CardDeck.js');
 
     /**
      * kiveszi a játékost a játékmenetből (tehát mindig átugorjuk őt; a játékosok sorszámai ne változzanak meg!)
-     * @param {int} playerId - A kilépő játékos sorszáma
+     * @param {number} playerId - A kilépő játékos sorszáma
      */
     removePlayer(playerId){
        this._removedPlayers[playerId] = true
@@ -352,7 +415,9 @@ var CardDeck = require('./CardDeck.js');
 
 
 
-    // console-ra írja az összes játékos lapját
+    /**
+     * console-ra írja az összes játékos lapját
+     */
     toString(){
         for (let i = 0; i < this._numOfPlayers; i++){
             console.log(i + '. játékos:')

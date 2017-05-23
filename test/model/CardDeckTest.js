@@ -1,3 +1,8 @@
+/**
+ * @file CardDeck osztály tesztjei
+ * @author Biró Ádám
+ */
+
 // ezek a tesztelő környezethez kellenek
 const chai = require('chai')
 const assert = chai.assert

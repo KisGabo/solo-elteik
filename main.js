@@ -1,3 +1,8 @@
+/**
+ * @file Ezzel indul el a szerver
+ * @author Bartalos Gábor
+ */
+
 const Http = require('http')
 const Gameserver = require('./server/gameserver')
 const Express = require('express')

@@ -1,7 +1,7 @@
 module.exports = {
   entry: __dirname + '/client/main.js',
   output: {
-    filename: 'webpack.js',
+    filename: '_webpack.js',
     path: __dirname + '/client/public/compiled',
   },
   module: {

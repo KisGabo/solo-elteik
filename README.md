@@ -6,10 +6,7 @@
 
 1. `git clone https://github.com/kisgabo/solo-elteik`
 2. `npm i`
-3. A kliens indítása egyelőre: `npm run dev`
-  - Ezután a böngészőben a *localhost:8080* cím alatt érhető el.
-  - Ha a *client* mappában lévő fájlt változtatsz, automatikusan újratöltődik az oldal a böngészőben (ha mégsem, akkor frissíts).
-  - A kliens leállítása: CTRL+C
+3. `npm start` a rendszer (szerver) indításához, ezután localhoston érhető el a játék (80-as port)
 
 ## Fájlok, könyvtárak
 

@@ -1,4 +1,7 @@
-// Segédfüggvények
+/**
+ * @file Segédfüggvények.
+ * @author Deák Dániel
+ */
 
 export function $(selector) {
     return document.querySelector(selector)

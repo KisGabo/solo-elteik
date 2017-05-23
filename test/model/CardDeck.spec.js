@@ -1,3 +1,8 @@
+/**
+ * @file Tesztelő keretrendszer használatára példa.
+ * @author Bartalos Gábor
+ */
+
 // ezek a tesztelő környezethez kellenek
 const chai = require('chai')
 const assert = chai.assert

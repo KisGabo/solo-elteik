@@ -1,3 +1,8 @@
+/**
+ * @file SoloGame tesztjei
+ * @author Biró Ádám
+ */
+
 // npm run test-model
 
 // ezek a tesztelő környezethez kellenek
@@ -254,7 +259,7 @@ top = game2.getCurrentCard()
 })
 
 
-/**
+/*
      * Két játékossal indítom újra a játékot és az egyikkel felhúzatom az egész paklit - 
      * így nagyobb a legnagyobb a valószínűsége, hogy felhízlalt játékosnál lesz olyan lap, 
      * aminek a tesztelését végzem.

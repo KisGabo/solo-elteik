@@ -1,3 +1,8 @@
+/**
+ * A megkevert, lefelé fordított kártyapaklit reprezentálja.
+ * @module Server/Model
+ * @author Biró Ádám
+ */
 class CardDeck {
 
     /**
@@ -203,6 +208,7 @@ class CardDeck {
 
     /**
      *  hány kártyalap van még a pakliban
+     * @return {number}
      */
     count(){
         return this._cards.length
@@ -211,6 +217,7 @@ class CardDeck {
 
     /**
      * pakli tetejéről a következő kártyalapot adja vissza (és le is veszi a pakliról)
+     * @return {Card}
      */
     draw(){
         return this._cards.pop()
@@ -220,7 +227,7 @@ class CardDeck {
     /**
      * A paraméterül kapott tömb elemeit (az eddig kijátszott lapokat) megkeveri, majd ezt értékül adja a _cards tömbnek
      * Annak a műveletnek felel meg, amikor játék közben elfogy a deck és valaki megkeveri.
-     *  @param {Array} t - A tömb, amely a kijátszott lapokat tartalmazza
+     *  @param {Card[]} t - A tömb, amely a kijátszott lapokat tartalmazza
      */
     shuffle(t){
         _cards = shuffle(t)
@@ -232,7 +239,8 @@ class CardDeck {
 
 /**
  * Megkeveri a paraméterül kapott tömb elemeit
- * @param {Array} a - A tömb, amely a megkeverendő elemeket tartalmazza
+ * @param {any[]} a - A tömb, amely a megkeverendő elemeket tartalmazza
+ * @private
  */
  function shuffleArray(a) {
     for (let i = a.length; i; i--) {

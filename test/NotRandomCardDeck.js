@@ -1,12 +1,14 @@
 /**
- * Előre meghatározott sorrendű paklit szimulál
+ * Előre meghatározott sorrendű paklit szimulál (tesztelési célokra)
+ * @module Server/Model
+ * @author Bartalos Gábor
  */
 class NotRandomCardDeck {
 
 	/**
 	 * @param {number} count Hány kártyalapos paklinak látszik ez kívülről
 	 */
-  constructor (count) {
+  	constructor (count) {
 		this._initialCount = count
 		this._count = count
 		this._deck = []

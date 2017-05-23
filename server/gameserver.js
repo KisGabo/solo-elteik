@@ -5,16 +5,47 @@ const CardDeck = require('./model/CardDeck')
 
 const PLAYERS = 4
 
+/**
+ * A játék szervere, amely koordinálja a játékmenetet,
+ * kapcsolatot teremt a játékosok között.
+ * @module Server
+ * @author Bartalos Gábor
+ */
 class Gameserver {
   
+  /**
+   * @param {any} httpServer A node-os HttpServer objektum, amin fut majd a Socket.io
+   */
   constructor (httpServer) {
+    /**
+     * @member {any} A node-os HttpServer
+     * @private
+     */
     this._http = httpServer
+
+    /**
+     * @member {number} A következő játékmenet azonosítója
+     * @private
+     */
     this._nextGameId = 1
+
+    /**
+     * @member {number} Hány játékos vár jelenleg
+     * @private
+     */
     this._playersWaiting = new Array(PLAYERS).fill(false)
+
+    /**
+     * @member {Object} Játékmenetek
+     * @private
+     */
     this._games = {}
     this._games[1] = { model: null, sockets: {} }
   }
 
+  /**
+   * Elindítja a szerver.
+   */
   start () {
     this._io = Socketio(this._http)
     
@@ -23,6 +54,13 @@ class Gameserver {
     })
   }
 
+  /**
+   * Kezeli egy kliens csatlakozását.
+   * Ha összegyűlt a kellő számú játékos, elindítja a játékot.
+   * @param {any} socket Kliens socket
+   * @param {string} name Játékos neve
+   * @private
+   */
   _onJoin (socket, name) {
     const nextGame = this._games[this._nextGameId]
 
@@ -79,6 +117,10 @@ class Gameserver {
     }
   }
 
+  /**
+   * Kezeli egy játékos lecsatlakozását.
+   * @param {any} socket Kliens socket
+   */
   _onDisconnect (socket) {
     // ha még azelőtt csatlakozik le, hogy feljegyeztük volna,
     // nem sértődünk meg rajta, szíve-joga
@@ -105,6 +147,15 @@ class Gameserver {
       .emit('playerDisconnected', socket.playerId)
   }
 
+  /**
+   * Kezeli, mikor egy játékos lapot tesz le.
+   * Előtte megnézi, hogy a játékos helyes lépést akar-e tenni.
+   * @param {any} socket Kliens socket
+   * @param {Object} data Információ
+   * @param {number} data.cardId A lerakni kívánt lap indexe
+   * @param {string|number} [data.info] Színváltós lap esetén a kért szín,
+   *   csere esetén a játékos sorszáma
+   */
   _onPlace (socket, data) {
     const game = this._games[socket.gameId]
 
@@ -154,6 +205,11 @@ class Gameserver {
     }
   }
 
+  /**
+   * Kezeli, ha egy játékos húzni akar a pakliból.
+   * Előtte megnézi, hogy tényleg ő van-e soron.
+   * @param {any} socket Kliens socket
+   */
   _onDraw (socket) {
     const game = this._games[socket.gameId]
 
