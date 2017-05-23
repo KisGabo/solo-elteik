@@ -192,6 +192,7 @@ class Gameserver {
         card: placedCard,
         playerId: socket.playerId,
         info: data.info,
+        nextPlayerId: game.model.getNextPlayer(),
         newCards: (sendNewCards ? game.model.getPlayerCards(i) : undefined)
       }
 

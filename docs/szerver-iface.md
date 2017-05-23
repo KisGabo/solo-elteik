@@ -48,7 +48,7 @@ socket.emit('történés', adat)
    Ha egy játékos lecsatlakozott várakozás vagy játék közben. Egyelőre ha játék közben lecsatlakozik valaki, akkor a játék simán folytatódik a lecsatlakozott játékos kitörlésével.
 - **started**: `{ cards: [...], firstCard: ... }`
    Megvan mindenki, indul a játék, az 1-es sorszámú játékos kezd. A cards a kliensnek osztott lapok, a firstCard meg a kezdő lap.
-- **cardPlaced**: `{ card: ..., playerId: ..., info: ..., newCards: [...], numOfCards: [...], end: true }`
+- **cardPlaced**: `{ card: ..., playerId: ..., info: ..., newCards: [...], numOfCards: [...], nextPlayerId: ..., end: true }`
    Valaki (playerId) lerakott egy lapot (card). Az info ugyanaz, mint feljebb a place-nél. A newCards tömbben vannak a klienshez kerülő új kártyalapok, ha a klienst érintő csere történt. Ez az esemény annak a kliensnek is elmegy, aki épp a lapot rakta. A numOfCards tömb tartalmazza azt, hogy kinek hány lapja van (egy csere után). Az end kulcs jelenléte a játék végét jelzi.
 - **drawn**: `{ numOfCards: ..., playerId: ..., drawnCards: [...] }`
    Valaki (playerId) kártyalapo(ka)t húzott fel a pakliból, pontosan numOfCards darabot. A drawnCards tömbben vannak a felhúzott kártyalapok, ha maga a kliens húzott.

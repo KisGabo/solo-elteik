@@ -77,6 +77,7 @@ export function started (data) {
  * @param {Object} data Szerver által küldött adat
  * @param {Card} data.card A lerakott lap
  * @param {number} data.playerId Ki rakta le
+ * @param {number} data.nextPlayerId Ki a soron következő játékos
  * @param {string} [data.info] Ha színválasztó lap, akkor a választott szín
  * @param {Card[]} [data.newCards] Ha minket érintő csere történt, akkor az új lapjaink
  * @param {number[]} [data.numOfCards] Ha csere történt, akkor a játékosok lapjainak száma
