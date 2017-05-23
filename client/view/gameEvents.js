@@ -18,16 +18,18 @@ var blackCards = loadImages('N')
 var backSide = loadImage('back')
 var players= []
 var player = {name:'',id:'',noCards:0,cards:[]}
+var topCard
+var lastClickedCard
 
 /* ha jön a jelzés a szervertől, hogy új ember csatlakozott, beszúr egy új 
 elemet a listába */
 export function playerConnected (data) {
+    console.log('--> client: playerConnected', data)
     var newPlayer = document.createElement('li')
     newPlayer.setAttribute('class','playerInWaiting')
     newPlayer.setAttribute('id', 'player-'+data.id)
     newPlayer.innerHTML = 'Sorszám: ' + data.id + ' Név: ' + data.name
-    players.push({'id':data.id,'name':data.name,'noCards':0})
-    console.log(player)
+    players[data.id] = {'id':data.id,'name':data.name,'noCards':8}
     $('#players').appendChild(newPlayer)
 
 }
@@ -42,38 +44,60 @@ export function playerDisconnected (playerId) {
 }
 
 export function started (data) {
+    console.log('--> client: started', data);
     player.id=findPlayerByName(player.name)
     player.cards=data.cards
     player.noCards = data.cards.length
     console.log(player)
     waitroom = false
+    topCard = data.firstCard
     gameInit(data.firstCard)
 
 }
-`{ card: ..., playerId: ..., info: ..., newCards: [...] }`
+
 export function cardPlaced (data) {
-    players[data.playerId].noCards--
-    if(data.card.type=="wild"||data.card.type=="draw4wild"){
-        alert(data.info+" színt kell raknod!")
-    }else if(newCards.length>0){
-        player.cards=newCards
+    console.log('PLAYER IDS', data.playerId, player.id)
+    if (data.end) {
+        alert('A játéknak vége. ' + 
+                (data.playerId === player.id ?
+                'Te nyertél.' :
+                players[data.playerId].name + ' nyert.'))
+        window.location.reload()
+        return
     }
+    if (data.playerId == player.id) {
+        removeCard(lastClickedCard)
+    } else {
+        players[data.playerId].noCards--
+        if(data.card.type=="wild"||data.card.type=="draw4wild"){
+            alert(data.info+" színt kért a játékos")
+        }
+    }
+    if(data.newCards && data.newCards.length>0){
+        player.cards=data.newCards
+        player.noCards = data.newCards.length
+    }
+    if (data.numOfCards) {
+        data.numOfCards.forEach((noCards, i) => players[i].noCards = noCards)
+    }
+    topCard = data.card
     redraw()
 }
 
 //data = { numOfCards: ..., playerId: ..., drawnCards: [...] }
 export function drawn (data) {
-    if (player.id = data.playerId){
-        player.cards.push(data.drawnCards)
-        player.noCards+=numOfCards
-    }else{
-        players[data.playerId].noCards+=numOfCards
+    if (player.id == data.playerId){
+        for (var c of data.drawnCards) {
+            player.cards.push(c)
+        }
+        player.noCards+=data.numOfCards
     }
+    players[data.playerId].noCards+=data.numOfCards
     redraw()
 }
 
 export function illegalAction () {
-
+    alert('Ezt most nem lépheted meg.')
 }
 
 
@@ -87,7 +111,7 @@ export function setPlayer(name){
 }
 
 function findPlayerByName(name){
-    for (p in players){
+    for (var p of players){
         if(p.name == name) return p.id
     }
 }
@@ -132,7 +156,7 @@ function cardsDrawn(drawnCards, numOfCards){
     var cardColor
     var cardSuffix
     var cardImages=[]
-    if(numOfCards == 1){
+    if(numOfCards == 1 && !drawnCards[0]){
         card = drawnCards
         cardColor = decideColor(card.color) //eldönti a rövidítését
         if(card.type=='number'){
@@ -209,6 +233,7 @@ function gameInit(firstCard){
   var tracker = 0;
   for (var j=0;j<players.length;j++){
     for(var i=0; i<players[j].noCards;i++){
+        console.log('draw card', players[j], i);
         if(players[j].id!=player.id){
              drawCardFor(players[j],tracker,i)
         }
@@ -230,7 +255,7 @@ function redraw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);//letörli az eddigit
     var noPlayers = 4
     var cardImages = cardsDrawn(player.cards,player.noCards)
-    drawCard(ctx, blueCards.get('draw2'), (canvas.width/2)-(backSide.width/2)-25 , (canvas.height/2)-(backSide.height/2))//középső lap
+    drawCard(ctx, cardsDrawn(topCard, 1), (canvas.width/2)-(backSide.width/2)-25 , (canvas.height/2)-(backSide.height/2))//középső lap
     var tracker = 0;//hogy tudjuk, melyik ellenfélnek rajzolandó ki a lapja
 
     //játékosok lapjai
@@ -254,13 +279,13 @@ function redraw(){
 //kiveszi a kirakott lapokat a kezéből
 function removeCard(pos){
   player.cards.splice(pos,1)
-  var tempcards = []
-  for (var i=0; i<player.noCards;i++){
-      if(player.cards[i]) tempcards.push(player.cards[i])
-  }
-  player.cards = tempcards
+//   var tempcards = []
+//   for (var i=0; i<player.noCards;i++){
+//       if(player.cards[i]) tempcards.push(player.cards[i])
+//   }
+//   player.cards = tempcards
   player.noCards-=1
-
+  players[player.id].noCards-=1
 }
 
 //kilépő játékos törlése
@@ -288,7 +313,7 @@ function clicked(ev){
     var deckY =  (canvas.height/2)-(backSide.height/2) 
     if(mX>=deckX && mX<deckX+(9*2.5)+backSide.width && mY >= deckY && mY < deckY+(9*2.5)+backSide.height){
          console.log("pakli" )
-         removeActions.draw()
+         remoteActions.draw()
     }
     for(var i = 0; i<player.noCards; i++){
         imgX = ((canvas.width/2)-(player.noCards-1)*50+i*85)
@@ -296,15 +321,27 @@ function clicked(ev){
         console.log(imgY)
         if(mX>= imgX && mX< imgX+backSide.width && mY >= imgY && mY < imgY + backSide.height){
             console.log("Bent " + i )
-            if(player.cards[i].type=="draw4wild" ||player.cards[i].type=="wild") var color = wild()
-            remoteActions.place(i,color)
+            var info
+            if(player.cards[i].type=="draw4wild" ||player.cards[i].type=="wild") info = wild()
+            else if (player.cards[i].type=="swap") info = swap()
+            remoteActions.place({ cardId: i, info: info })
+            lastClickedCard = i
             console.log(player.cards[i])
         }
     }
 }
 
 function wild(){
- var color=  prompt("Kérlek, adj meg egy színt, amelyet kiválasztanál!(red/blue/green/yellow)");
- if(color=='red'||color=='blue'||color=='green'||color=='yellow') return color
- else wild()
+ while (true) {
+  var color=  prompt("Kérlek, adj meg egy színt, amelyet kiválasztanál!(red/blue/green/yellow)");
+  if(color=='red'||color=='blue'||color=='green'||color=='yellow') return color
+ }
+}
+
+function swap(){
+ while (true) {
+  var swapWith = prompt("Kérlek add meg a játékos sorszámát (0-tól kezdve), akivel cserélni szeretnél! (vagy -1 ha nem szeretnél cserélni)")
+  swapWith = parseInt(swapWith)
+  if (swapWith < players.length && swapWith >= -1 && player.id !== swapWith) return swapWith
+ }
 }

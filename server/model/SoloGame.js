@@ -53,8 +53,10 @@ var CardDeck = require('./CardDeck.js');
             }
         }
         
-        this._topCard = this._deck.draw()
-        this._playedCards.push(this._topCard)
+        do {
+            this._topCard = this._deck.draw()
+            this._playedCards.push(this._topCard)
+        } while (this._topCard.type !== 'number')        
         
     }
 
@@ -76,31 +78,25 @@ var CardDeck = require('./CardDeck.js');
      */
     canBePlaced(card, playerId){   
          // leellenőrzi, hogy az adott játékosnak van-e egyáltalán ilyen kártyája - console-beli hack-ek elkerülése miatt
-        var b = false
-        for (let i = 0; i < this._players[playerId].length; i++){
-            if (this._players[playerId][i].color == card.color){
-                if (this._players[playerId][i].type == card.type){
-                    if (this._players[playerId][i].number == card.number){
-                        b = true
-                    }
-                }
-            }
-        }
-        if (!b){
-            return false
-        }
+        // var b = false
+        // for (let i = 0; i < this._players[playerId].length; i++){
+        //     if (this._players[playerId][i].color == card.color){
+        //         if (this._players[playerId][i].type == card.type){
+        //             if (this._players[playerId][i].number == card.number){
+        //                 b = true
+        //             }
+        //         }
+        //     }
+        // }
+        // if (!b){
+        //     return false
+        // }
 
         // közbedobás ellenőrzése. Bármelyik játékos - akár a legutoljára dobó is-, aki birtokolja az utoljára dobott
         // lapot, soron kívül bedobhatja.
-        for (let i = 0; i < this._players[playerId].length; i++){
-            if (this._players[playerId][i].type == 'number' && card.type == 'number'){
-                if (this._players[playerId][i].color == card.color){
-                    if (this._players[playerId][i].number == card.number){
-                        return true
-                    }
-                }
-            } 
-        }        
+        if (card.type == 'number' && this._topCard.color === card.color && this._topCard.number === card.number){
+            return true
+        }      
 
         // ha nem közbedobásról van szó és nem is a soron következő játékos dobna, akkor return false
         if (this._onTurn != playerId){
@@ -108,30 +104,38 @@ var CardDeck = require('./CardDeck.js');
         }       
 
        
-        // ha a legutoljára dobott lap típusa draw2 (húzz kettőt), a dobni kívánt lap pedig nem draw2
-        if (this._topCard.type == 'draw2' && card.type != 'draw2'){
-            return false
+        // ha húzni kéne a játékosnak, akkor csak megfelelő lapokat tehet
+        if (this._cardsToDraw > 0) {
+            return card.type === 'draw4wild' || this._topCard.type === 'draw2' && card.type === 'draw2' && this._topCard.color === card.color
         }
-        
 
-        // szín- vagy számegyezés
-           if (this._wantedColor == ''){
-                 if (card.color == this._topCard.color || card.number == this._topCard.number){         
-                     return true
-                }
-           } else 
-                if (card.color ==_wantedColor){
-                    return true
-                }
-       
-
-        // nem draw4wild-ea wild vagy circular 
-        if ( this._topCard.type != 'draw4wild' && (dcard.type == 'wild' || card.type == 'circular')){
+        // circularra bármi jöhet
+        if (this._topCard.type === 'circular') {
             return true
         }
 
-         // dra4wild
-        if (card.type == 'draw4wild' ){
+        // bármikor kijátszható lapok
+        if (card.type === 'wild' || card.type === 'draw4wild' || card.type === 'circular') {
+            return true
+        }
+
+        // kért színre csak a kért színt
+        if (this._wantedColor) {
+            return this._wantedColor === card.color
+        }
+
+        // ha a szín egyezik, már oké
+        if (this._topCard.color === card.color) {
+            return true
+        }
+
+        // szám egyezés esetén oké
+        if (this._topCard.type === 'number' && this._topCard.number === card.number) {
+            return true
+        }
+
+        // akciókártya típusának egyezése esetén oké
+        if (card.type !== 'number' && this._topCard.type === card.type) {
             return true
         }
 
@@ -154,14 +158,18 @@ var CardDeck = require('./CardDeck.js');
     place(cardId, playerId, info){
         const card = this._players[playerId][cardId]
 
+        this._topCard = this._players[playerId].splice(cardId, 1)[0]
+        this._playedCards.push(this._topCard)
+
         switch (card.type){
             case 'number': 
                 this._wantedColor = ''
                 this._cardsToDraw = 0
-                 this._stepToNext(1)
+                // csak numbert lehet közbedobni, így itt megadjuk a `from` paramétert is
+                 this._stepToNext(1, playerId)
                 break
             case 'reverse':                
-                this._originalDirection = !_originalDirection
+                this._originalDirection = !this._originalDirection
                 this._wantedColor = ''
                 this._cardsToDraw = 0
                 this._stepToNext(1)
@@ -179,16 +187,16 @@ var CardDeck = require('./CardDeck.js');
                 let i = parseInt(info)
                 if (info != -1){
                     let temp = this._players[i]
-                    this._players[i] = this._players[_onTurn]
-                    this._players[_onTurn] = temp
+                    this._players[i] = this._players[this._onTurn]
+                    this._players[this._onTurn] = temp
                 }
                 this._wantedColor = ''
                 this._cardsToDraw = 0
                 this._stepToNext(1)
                 break
             case 'circular':                
-                if(_originalDirection){
-                    let temp = this._players[_numOfPlayers-1]
+                if(this._originalDirection){
+                    let temp = this._players[this._numOfPlayers-1]
                     for (let i = this._numOfPlayers-1; i > 0 ; i-- ){
                         this._players[i] = this._players[i-1]
                     }
@@ -196,14 +204,14 @@ var CardDeck = require('./CardDeck.js');
                 } else {
                     let temp = this._players[0]
                     for (let i = 0; i < this._numOfPlayers-1; i++ ){
-                        this._players[i] = this._players[i-1]
+                        this._players[i] = this._players[i+1]
                     }
-                    this._players[_numOfPlayers-1] = temp
+                    this._players[this._numOfPlayers-1] = temp
                 }
                 this._cardsToDraw = 0
                 this._stepToNext(1)
                 break
-            case 'dra4wild':
+            case 'draw4wild':
                 this._cardsToDraw += 4
                 this._wantedColor = info
                 this._stepToNext(1)
@@ -215,9 +223,6 @@ var CardDeck = require('./CardDeck.js');
                 break     
 
         }
-
-        this._topCard = this._players[playerId].splice(cardId, 1)
-        this._playedCards.push(this._topCard)
 
     }
 
@@ -242,6 +247,7 @@ var CardDeck = require('./CardDeck.js');
                 }
             }
         }
+        this._players[this._onTurn].push(...toDraw)
         this._cardsToDraw = 0
         this._stepToNext(1)
         return toDraw
@@ -286,7 +292,7 @@ var CardDeck = require('./CardDeck.js');
      */
     hasEnded(){
         let i = 0
-        while(i < this._numOfPlayers-1){
+        while(i < this._numOfPlayers){
             if (this._players[i] === undefined || this._players[i].length == 0){
                 return true
             }
@@ -313,8 +319,10 @@ var CardDeck = require('./CardDeck.js');
 /**
  * Segédfüggvény, amely a paraméterül kapott számmal lépteti a soron következő játékost tároló változót
  * @param {int} n - A szám, hogy mennyivel léptesse. Ennek értéke 1 (normál lépés) vagy 2 (skip esetén) lehet
+ * @param {int} from - Kitől kezdve léptesse (közbedobás esetén ez nem a this._onTurn)
  */
-    _stepToNext(n){
+    _stepToNext(n, from){
+        if (from !== undefined) this._onTurn = from
         let c = 0        
         if (this._originalDirection){
            while(c < n){                

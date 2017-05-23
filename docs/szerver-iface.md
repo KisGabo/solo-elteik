@@ -36,7 +36,7 @@ socket.emit('történés', adat)
 - **connect**: játékos neve
 - **disconnect**
 - **place**: `{ cardId: ..., info: ... }`
-   Kártya lerakása. Az info egy szín, ha színváltós kártyalapot tesz le, illetve egy játékos neve kártyacsere lap esetén; üres string, ha nem akar cserélni. A szerver ezután egy *cardPlaced* eseményt küld el mindenkinek.
+   Kártya lerakása. Az info egy szín, ha színváltós kártyalapot tesz le, illetve egy játékos sorszáma kártyacsere lap esetén; üres string, ha nem akar cserélni. A szerver ezután egy *cardPlaced* eseményt küld el mindenkinek.
 - **draw**:
    A kliens nem tud rakni, így húznia kell. A szerver ezután egy *drawn* eseményt küld el mindenkinek.
 
@@ -48,8 +48,8 @@ socket.emit('történés', adat)
    Ha egy játékos lecsatlakozott várakozás vagy játék közben. Egyelőre ha játék közben lecsatlakozik valaki, akkor a játék simán folytatódik a lecsatlakozott játékos kitörlésével.
 - **started**: `{ cards: [...], firstCard: ... }`
    Megvan mindenki, indul a játék, az 1-es sorszámú játékos kezd. A cards a kliensnek osztott lapok, a firstCard meg a kezdő lap.
-- **cardPlaced**: `{ card: ..., playerId: ..., info: ..., newCards: [...] }`
-   Valaki (playerId) lerakott egy lapot (card). Az info ugyanaz, mint feljebb a place-nél. A newCards tömbben vannak a klienshez kerülő új kártyalapok, ha a klienst érintő csere történt. Ez az esemény annak a kliensnek is elmegy, aki épp a lapot rakta.
+- **cardPlaced**: `{ card: ..., playerId: ..., info: ..., newCards: [...], numOfCards: [...], end: true }`
+   Valaki (playerId) lerakott egy lapot (card). Az info ugyanaz, mint feljebb a place-nél. A newCards tömbben vannak a klienshez kerülő új kártyalapok, ha a klienst érintő csere történt. Ez az esemény annak a kliensnek is elmegy, aki épp a lapot rakta. A numOfCards tömb tartalmazza azt, hogy kinek hány lapja van (egy csere után). Az end kulcs jelenléte a játék végét jelzi.
 - **drawn**: `{ numOfCards: ..., playerId: ..., drawnCards: [...] }`
    Valaki (playerId) kártyalapo(ka)t húzott fel a pakliból, pontosan numOfCards darabot. A drawnCards tömbben vannak a felhúzott kártyalapok, ha maga a kliens húzott.
 - **illegalAction**:

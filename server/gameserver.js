@@ -3,7 +3,7 @@ const GameModel = require('./model/SoloGame')
 const CardDeck = require('./model/CardDeck')
 //const GameModel = class {}
 
-const PLAYERS = 3
+const PLAYERS = 4
 
 class Gameserver {
   
@@ -136,13 +136,21 @@ class Gameserver {
       // változtak a játékos kezében lévő kártyák csere következtében?
       const sendNewCards = (placedCard.type === 'circular' ||
         placedCard.type === 'swap' && (i === socket.playerId || i === data.info))
-
-      game.sockets[i].emit('cardPlaced', {
+      
+      const toSend = {
         card: placedCard,
         playerId: socket.playerId,
         info: data.info,
         newCards: (sendNewCards ? game.model.getPlayerCards(i) : undefined)
-      })
+      }
+
+      // csere esetén elküldjük, kinél hány lap van
+      if (placedCard.type === 'swap' || placedCard.type === 'circular') {
+        toSend.numOfCards = Object.getOwnPropertyNames(game.sockets)
+            .map(pid => game.model.getPlayerCards(pid).length)
+      }
+
+      game.sockets[i].emit('cardPlaced', toSend)
     }
   }
 

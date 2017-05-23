@@ -21,8 +21,8 @@ export function connect (name) {
   socket.on('playerDisconnected', handlers.playerDisconnected)
   socket.on('started', handlers.started)
   socket.on('cardPlaced', handlers.cardPlaced)
-  socket.on('drawn', data => handlers.drawn)
-  socket.on('illegalAction', data => console.log('--> me: illegalaction', data))
+  socket.on('drawn', handlers.drawn)
+  socket.on('illegalAction', handlers.illegalAction)
 
   window.place = place
   window.draw = draw
