@@ -6,7 +6,12 @@
 
 1. `git clone https://github.com/kisgabo/solo-elteik`
 2. `npm i`
-3. `npm start` a rendszer (szerver) indításához, ezután localhoston érhető el a játék (80-as port)
+3. `npm start` a rendszer (szerver) indításához (ez csinál egy webpack buildet is), ezután localhoston érhető el a játék (80-as port)
+
+Egyéb szkriptek:
+
+* `npm run build`: futtatja a webpacket és újragenerálja a dokumentációt, mely a jsdocs mappában lesz elérhető (index.html)
+* `npm run test-model`: futtatja a modell tesztjeit
 
 ## Fájlok, könyvtárak
 

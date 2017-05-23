@@ -1,3 +1,5 @@
+const BabiliPlugin = require("babili-webpack-plugin")
+
 module.exports = {
   entry: __dirname + '/client/main.js',
   output: {
@@ -13,6 +15,9 @@ module.exports = {
       }
     ],
   },
+  plugins: [
+    new BabiliPlugin()
+  ],
   devServer: {
     publicPath: '/compiled/',
     contentBase: __dirname + '/client/public',
